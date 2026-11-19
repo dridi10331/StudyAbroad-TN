@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  password          String?
+  emailVerified     DateTime?
+  image             String?
+  role              String             @default("user") // user, admin
+  stripeCustomerId  String?            @unique
+  subscription      Subscription?
+  chatSessions      ChatSession[]
+  learningProgress  LearningProgress[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String   @unique
+  stripePriceId        String
+  stripeCurrentPeriodEnd DateTime
+  status               String   // active, canceled, past_due, unpaid
+  plan                 String   // basic, premium
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Country {
+  id          String    @id @default(cuid())
+  name        String    @unique // France, Italy, Germany, etc.
+  slug        String    @unique
+  description String?
+  flag        String?   // emoji or image URL
+  courses     Course[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  countryId   String
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  title       String
+  slug        String   @unique
+  description String?
+  content     String?  // markdown content
+  videoUrl    String?
+  order       Int      @default(0)
+  isPremium   Boolean  @default(false)
+  category    String   // visa, campus_france, applications, scholarships, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language  String        // french, english, german
+  level     String?       // A1, A2, B1, B2, C1, C2
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ChatMessage {
+  id            String      @id @default(cuid())
+  sessionId     String
+  session       ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role          String      // user, assistant, system
+  content       String
+  tokenCount    Int?
+  createdAt     DateTime    @default(now())
+}
+
+model LearningProgress {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language  String    // french, english, german
+  level     String    @default("A1")
+  points    Int       @default(0)
+  streakDays Int      @default(0)
+  lastActive DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, language])
+}

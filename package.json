@@ -6,20 +6,37 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "contract:emit": "prisma contract emit",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.10",
+    "jsonwebtoken": "^9.0.3",
     "next": "16.4.6",
+    "next-auth": "^5.0.0-beta.32",
+    "openai": "^7.60.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-hot-toast": "^2.6.1",
+    "stripe": "^23.1.0",
+    "zod": "^4.6.7",
+    "zustand": "^5.1.0"
   },
   "devDependencies": {
+    "@prisma/client": "^5.22.0",
     "@tailwindcss/turbopack": "4.3.3",
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "prisma": "^5.22.0",
     "tailwindcss": "4.3.3",
     "typescript": "^5"
   }
